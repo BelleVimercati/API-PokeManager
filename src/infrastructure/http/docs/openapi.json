@@ -1,0 +1,231 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "PokéManager API",
+    "description": "API REST para gerenciamento do catálogo local de Pokémons.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Servidor local"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Pokemons",
+      "description": "Operações de cadastro do catálogo local de Pokémons"
+    }
+  ],
+  "paths": {
+    "/pokemons": {
+      "get": {
+        "tags": ["Pokemons"],
+        "summary": "Lista os Pokémons do catálogo local",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filtra os Pokémons pelo tipo (ex: fire, water)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de Pokémons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Pokemon" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Pokemons"],
+        "summary": "Cadastra um novo Pokémon no catálogo local",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PokemonInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pokémon criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/PokemonInput" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pokemons/{id}": {
+      "get": {
+        "tags": ["Pokemons"],
+        "summary": "Busca um Pokémon pelo id",
+        "parameters": [{ "$ref": "#/components/parameters/PokemonId" }],
+        "responses": {
+          "200": {
+            "description": "Pokémon encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Pokemon" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pokémon não encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Pokemons"],
+        "summary": "Atualiza os dados de um Pokémon do catálogo local",
+        "parameters": [{ "$ref": "#/components/parameters/PokemonId" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PokemonUpdateInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pokémon atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/PokemonInput" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pokémon não encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Pokemons"],
+        "summary": "Remove um Pokémon do catálogo local",
+        "parameters": [{ "$ref": "#/components/parameters/PokemonId" }],
+        "responses": {
+          "200": {
+            "description": "Pokémon removido com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pokémon não encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "PokemonId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "Id do Pokémon"
+      }
+    },
+    "schemas": {
+      "Pokemon": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": { "type": "string" }
+        }
+      },
+      "PokemonInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" }
+        },
+        "required": ["name", "type"]
+      },
+      "PokemonUpdateInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "statusCode": { "type": "integer" },
+          "message": { "type": "string" }
+        }
+      }
+    }
+  }
+}

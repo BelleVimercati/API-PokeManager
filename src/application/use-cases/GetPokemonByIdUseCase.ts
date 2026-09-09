@@ -5,7 +5,7 @@ import { AppError } from '@domain/errors/app.error';
 export class GetPokemonByIdUseCase {
   constructor(private pokemonRepository: IPokemonRepository) {}
 
-  async execute(id: string): Promise<Pokemon | null> {
+  async execute(id: string): Promise<Pokemon> {
     const pokemon = await this.pokemonRepository.findById(id);
 
     if (!pokemon) {
