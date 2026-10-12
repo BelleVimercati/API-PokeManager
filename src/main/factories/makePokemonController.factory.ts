@@ -5,11 +5,13 @@ import { CreatePokemonUseCase } from '@application/use-cases/CreatePokemonUseCas
 import { UpdatePokemonUseCase } from '@application/use-cases/UpdatePokemonUseCase';
 import { DeletePokemonUseCase } from '@application/use-cases/DeletePokemonUseCase';
 import { PokemonController } from '@infrastructure/http/controllers/PokemonController';
+import { UpdatePokemonLevelUseCase } from '@application/use-cases/UpdatePokemonLevelUseCase';
 
 const repository = new PgPokemonRepository();
 
 export function makePokemonController(): PokemonController {
   const listPokemonUseCase = new ListPokemonUseCase(repository);
+  const updatePokemonLevelUseCase = new UpdatePokemonLevelUseCase(repository);
   const getPokemonByIdUseCase = new GetPokemonByIdUseCase(repository);
   const createPokemonUseCase = new CreatePokemonUseCase(repository);
   const updatePokemonUseCase = new UpdatePokemonUseCase(repository);
@@ -21,5 +23,6 @@ export function makePokemonController(): PokemonController {
     createPokemonUseCase,
     updatePokemonUseCase,
     deletePokemonUseCase,
+    updatePokemonLevelUseCase,
   );
 }

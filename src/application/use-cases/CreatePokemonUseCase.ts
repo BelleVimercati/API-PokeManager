@@ -6,6 +6,7 @@ import { randomUUID } from 'node:crypto';
 interface CreatePokemonDTO {
   name: string;
   type: string;
+  level?: number;
 }
 
 export class CreatePokemonUseCase {
@@ -13,7 +14,7 @@ export class CreatePokemonUseCase {
 
   async execute(data: CreatePokemonDTO): Promise<Pokemon> {
     const id = randomUUID();
-    const newPokemon = new Pokemon({ ...data, id });
+    const newPokemon = new Pokemon({ ...data, id, level: data.level ?? 1 });
     await this.pokemonRepository.create(newPokemon);
     return newPokemon;
   }

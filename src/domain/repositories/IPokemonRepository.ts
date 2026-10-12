@@ -6,4 +6,6 @@ export interface IPokemonRepository {
   create(pokemon: Pokemon): Promise<void>;
   update(pokemon: Pokemon): Promise<void>;
   delete(id: string): Promise<void>;
+  findByType(type: string): Promise<Pokemon[]>;
+  updateLevel(id: string, newLevel: number): Promise<void>;
 }
