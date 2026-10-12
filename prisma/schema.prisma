@@ -1,6 +1,8 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
+  // O projeto compila para CommonJS (sem "type": "module" no package.json)
+  moduleFormat = "cjs"
 }
 
 datasource db {

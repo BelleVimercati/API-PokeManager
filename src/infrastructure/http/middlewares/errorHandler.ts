@@ -8,11 +8,17 @@ export function errorHandler(
   _next: NextFunction,
 ) {
   if (error instanceof AppError) {
-    return res.status(error.statusCode).json({
+    const responsePayload: Record<string, unknown> = {
       status: 'error',
       statusCode: error.statusCode,
       message: error.message,
-    });
+    };
+
+    if (error.details !== undefined && error.details !== null) {
+      responsePayload.details = error.details;
+    }
+
+    return res.status(error.statusCode).json(responsePayload);
   }
 
   console.error('💥 [Uncaught Exception]:', error);
