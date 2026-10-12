@@ -15,6 +15,10 @@
     {
       "name": "Pokemons",
       "description": "Operações de cadastro do catálogo local de Pokémons"
+    },
+    {
+      "name": "Trainers",
+      "description": "Operações de cadastro de Treinadores"
     }
   ],
   "paths": {
@@ -182,6 +186,188 @@
           }
         }
       }
+    },
+    "/pokemons/{id}/level": {
+      "patch": {
+        "tags": ["Pokemons"],
+        "summary": "Atualiza o nível de um Pokémon",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "level": { "type": "integer", "example": 25 } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Nível atualizado" },
+          "400": { "description": "Nível inválido" },
+          "404": { "description": "Pokémon não encontrado" }
+        }
+      }
+    },
+    "/trainers": {
+      "get": {
+        "tags": ["Trainers"],
+        "summary": "Lista os Treinadores",
+        "responses": {
+          "200": {
+            "description": "Lista de Treinadores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Trainer" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Trainers"],
+        "summary": "Cadastra um novo Treinador",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TrainerInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Treinador criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Trainer" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "409": {
+            "description": "Já existe um Treinador cadastrado com este e-mail",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trainers/{id}": {
+      "get": {
+        "tags": ["Trainers"],
+        "summary": "Busca um Treinador pelo id",
+        "parameters": [{ "$ref": "#/components/parameters/TrainerId" }],
+        "responses": {
+          "200": {
+            "description": "Treinador encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Trainer" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Id inválido",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Treinador não encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Trainers"],
+        "summary": "Atualiza os dados de um Treinador",
+        "parameters": [{ "$ref": "#/components/parameters/TrainerId" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TrainerUpdateInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Treinador atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Trainer" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Treinador não encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "409": {
+            "description": "Já existe um Treinador cadastrado com este e-mail",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -192,6 +378,13 @@
         "required": true,
         "schema": { "type": "string" },
         "description": "Id do Pokémon"
+      },
+      "TrainerId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "integer" },
+        "description": "Id do Treinador"
       }
     },
     "schemas": {
@@ -218,6 +411,32 @@
           "type": { "type": "string" }
         }
       },
+      "Trainer": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "name": { "type": "string", "example": "Ash Ketchum" },
+          "email": { "type": "string", "example": "ash@pokemon.com" },
+          "specialty": { "type": "string", "example": "Elétrico" }
+        }
+      },
+      "TrainerInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Ash Ketchum" },
+          "email": { "type": "string", "example": "ash@pokemon.com" },
+          "specialty": { "type": "string", "example": "Elétrico" }
+        },
+        "required": ["name"]
+      },
+      "TrainerUpdateInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "specialty": { "type": "string" }
+        }
+      },
       "Error": {
         "type": "object",
         "properties": {
@@ -229,3 +448,4 @@
     }
   }
 }
+

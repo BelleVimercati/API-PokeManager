@@ -32,21 +32,17 @@ export class PgPokemonRepository implements IPokemonRepository {
     });
   }
 
-  async findByName(name: string): Promise<Pokemon | null> {
-    const query = `SELECT id, name, type, level FROM pokemons WHERE name = $1`;
-    const result = await postgresPool.query(query, [name]);
+  async searchByName(term: string): Promise<Pokemon[]> {
+    const query = `SELECT id, name, type, level FROM pokemons WHERE name ILIKE $1`;
+    const result = await postgresPool.query(query, [`%${term}%`]);
+    return result.rows.map((row) => this.toEntity(row));
+  }
 
-    if (result.rows.length === 0) {
-      return null;
-    }
-
-    const row = result.rows[0];
-    return new Pokemon({
-      id: row.id,
-      name: row.name,
-      type: row.type,
-      level: row.level,
-    });
+  async count(): Promise<number> {
+    const result = await postgresPool.query(
+      `SELECT COUNT(*)::int AS total FROM pokemons`,
+    );
+    return result.rows[0].total;
   }
 
   async findAll(): Promise<Pokemon[]> {
