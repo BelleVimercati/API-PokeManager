@@ -21,8 +21,10 @@
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.3",
     "express": "^5.2.1",
     "pg": "^8.23.1",
+    "prisma": "^6.19.3",
     "swagger-ui-express": "^5.0.1"
   }
 }
