@@ -8,13 +8,21 @@ class PokemonController {
     updatePokemonUseCase;
     deletePokemonUseCase;
     updatePokemonLevelUseCase;
-    constructor(listPokemonUseCase, getPokemonByIdUseCase, createPokemonUseCase, updatePokemonUseCase, deletePokemonUseCase, updatePokemonLevelUseCase) {
+    countPokemonUseCase;
+    searchPokemonByNameUseCase;
+    constructor(listPokemonUseCase, getPokemonByIdUseCase, createPokemonUseCase, updatePokemonUseCase, deletePokemonUseCase, updatePokemonLevelUseCase, countPokemonUseCase, searchPokemonByNameUseCase) {
         this.listPokemonUseCase = listPokemonUseCase;
         this.getPokemonByIdUseCase = getPokemonByIdUseCase;
         this.createPokemonUseCase = createPokemonUseCase;
         this.updatePokemonUseCase = updatePokemonUseCase;
         this.deletePokemonUseCase = deletePokemonUseCase;
         this.updatePokemonLevelUseCase = updatePokemonLevelUseCase;
+        this.countPokemonUseCase = countPokemonUseCase;
+        this.searchPokemonByNameUseCase = searchPokemonByNameUseCase;
+    }
+    async count(_req, res) {
+        const total = await this.countPokemonUseCase.execute();
+        return res.status(200).json({ total });
     }
     async list(req, res) {
         const type = typeof req.query.type === 'string' ? req.query.type : undefined;
@@ -36,7 +44,12 @@ class PokemonController {
         });
         return res.status(201).json({
             message: 'Pokemon created successfully',
-            data: { name: pokemon.name, type: pokemon.type, level: pokemon.level },
+            data: {
+                id: pokemon.id,
+                name: pokemon.name,
+                type: pokemon.type,
+                level: pokemon.level,
+            },
         });
     }
     async delete(req, res) {
@@ -56,6 +69,7 @@ class PokemonController {
         return res.status(200).json({
             message: 'Pokemon updated successfully',
             data: {
+                id: updatedPokemon.id,
                 name: updatedPokemon.name,
                 type: updatedPokemon.type,
                 level: updatedPokemon.level,
@@ -80,6 +94,18 @@ class PokemonController {
         return res
             .status(200)
             .json({ message: 'Pokemon level updated successfully' });
+    }
+    async search(req, res) {
+        const term = typeof req.query.name === 'string' ? req.query.name : '';
+        const pokemons = await this.searchPokemonByNameUseCase.execute(term);
+        return res.status(200).json({
+            data: pokemons.map((p) => ({
+                id: p.id,
+                name: p.name,
+                type: p.type,
+                level: p.level,
+            })),
+        });
     }
 }
 exports.PokemonController = PokemonController;

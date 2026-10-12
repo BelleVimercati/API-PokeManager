@@ -50,4 +50,14 @@ export class InMemoryPokemonRepository implements IPokemonRepository {
       });
     }
   }
+
+  async searchByName(name: string): Promise<Pokemon[]> {
+    return this.items.filter((item) =>
+      item.name.toLowerCase().includes(name.toLowerCase()),
+    );
+  }
+
+  async count(): Promise<number> {
+    return this.items.length;
+  }
 }

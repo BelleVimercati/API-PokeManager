@@ -30,19 +30,14 @@ class PgPokemonRepository {
             level: row.level,
         });
     }
-    async findByName(name) {
-        const query = `SELECT id, name, type, level FROM pokemons WHERE name = $1`;
-        const result = await connection_1.postgresPool.query(query, [name]);
-        if (result.rows.length === 0) {
-            return null;
-        }
-        const row = result.rows[0];
-        return new Pokemon_1.Pokemon({
-            id: row.id,
-            name: row.name,
-            type: row.type,
-            level: row.level,
-        });
+    async searchByName(term) {
+        const query = `SELECT id, name, type, level FROM pokemons WHERE name ILIKE $1`;
+        const result = await connection_1.postgresPool.query(query, [`%${term}%`]);
+        return result.rows.map((row) => this.toEntity(row));
+    }
+    async count() {
+        const result = await connection_1.postgresPool.query(`SELECT COUNT(*)::int AS total FROM pokemons`);
+        return result.rows[0].total;
     }
     async findAll() {
         const query = `SELECT id, name, type, level FROM pokemons`;

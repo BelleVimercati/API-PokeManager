@@ -43,5 +43,11 @@ class InMemoryPokemonRepository {
             });
         }
     }
+    async searchByName(name) {
+        return this.items.filter((item) => item.name.toLowerCase().includes(name.toLowerCase()));
+    }
+    async count() {
+        return this.items.length;
+    }
 }
 exports.InMemoryPokemonRepository = InMemoryPokemonRepository;

@@ -2,6 +2,13 @@ import { Pokemon } from '@domain/entities/Pokemon';
 import { IPokemonRepository } from '@domain/repositories/IPokemonRepository';
 import { postgresPool } from './connection';
 
+interface PokemonRow {
+  id: string;
+  name: string;
+  type: string;
+  level: number;
+}
+
 export class PgPokemonRepository implements IPokemonRepository {
   async create(pokemon: Pokemon): Promise<void> {
     const query = `
@@ -23,7 +30,7 @@ export class PgPokemonRepository implements IPokemonRepository {
     return result.rows.map((row) => this.toEntity(row));
   }
 
-  private toEntity(row: any): Pokemon {
+  private toEntity(row: PokemonRow): Pokemon {
     return new Pokemon({
       id: row.id,
       name: row.name,

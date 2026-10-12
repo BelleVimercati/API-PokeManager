@@ -5,6 +5,8 @@ import { CreatePokemonUseCase } from '@application/use-cases/CreatePokemonUseCas
 import { UpdatePokemonUseCase } from '@application/use-cases/UpdatePokemonUseCase';
 import { DeletePokemonUseCase } from '@application/use-cases/DeletePokemonUseCase';
 import { UpdatePokemonLevelUseCase } from '@application/use-cases/UpdatePokemonLevelUseCase';
+import { CountPokemonUseCase } from '@application/use-cases/CountPokemonUseCase';
+import { SearchPokemonByNameUseCase } from '@application/use-cases/SearchPokemonByNameUseCase';
 
 export class PokemonController {
   constructor(
@@ -14,7 +16,14 @@ export class PokemonController {
     private readonly updatePokemonUseCase: UpdatePokemonUseCase,
     private readonly deletePokemonUseCase: DeletePokemonUseCase,
     private readonly updatePokemonLevelUseCase: UpdatePokemonLevelUseCase,
+    private readonly countPokemonUseCase: CountPokemonUseCase,
+    private readonly searchPokemonByNameUseCase: SearchPokemonByNameUseCase,
   ) {}
+
+  async count(_req: Request, res: Response): Promise<Response> {
+    const total = await this.countPokemonUseCase.execute();
+    return res.status(200).json({ total });
+  }
 
   async list(req: Request, res: Response): Promise<Response> {
     const type =
@@ -39,7 +48,12 @@ export class PokemonController {
     });
     return res.status(201).json({
       message: 'Pokemon created successfully',
-      data: { name: pokemon.name, type: pokemon.type, level: pokemon.level },
+      data: {
+        id: pokemon.id,
+        name: pokemon.name,
+        type: pokemon.type,
+        level: pokemon.level,
+      },
     });
   }
 
@@ -61,6 +75,7 @@ export class PokemonController {
     return res.status(200).json({
       message: 'Pokemon updated successfully',
       data: {
+        id: updatedPokemon.id,
         name: updatedPokemon.name,
         type: updatedPokemon.type,
         level: updatedPokemon.level,
@@ -93,5 +108,18 @@ export class PokemonController {
     return res
       .status(200)
       .json({ message: 'Pokemon level updated successfully' });
+  }
+
+  async search(req: Request, res: Response): Promise<Response> {
+    const term = typeof req.query.name === 'string' ? req.query.name : '';
+    const pokemons = await this.searchPokemonByNameUseCase.execute(term);
+    return res.status(200).json({
+      data: pokemons.map((p) => ({
+        id: p.id,
+        name: p.name,
+        type: p.type,
+        level: p.level,
+      })),
+    });
   }
 }
