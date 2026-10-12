@@ -18,7 +18,7 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
 app.use('/api/v1/pokemons', pokemonRoutes);
 app.use(errorHandler);
 
-const PORT = 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3333;
 app.listen(PORT, () => {
   console.log(`PokéManager API rodando em http://localhost:${PORT}`);
 });

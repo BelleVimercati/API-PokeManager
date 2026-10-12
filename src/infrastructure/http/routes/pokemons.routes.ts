@@ -1,21 +1,7 @@
 import { Router } from 'express';
-import { InMemoryPokemonRepository } from '@infrastructure/database/in-memory/InMemoryPokemonRepository';
-import { ListPokemonUseCase } from '@application/use-cases/ListPokemonUseCase';
-import { GetPokemonByIdUseCase } from '@application/use-cases/GetPokemonByIdUseCase';
-import { CreatePokemonUseCase } from '@application/use-cases/CreatePokemonUseCase';
-import { UpdatePokemonUseCase } from '@application/use-cases/UpdatePokemonUseCase';
-import { DeletePokemonUseCase } from '@application/use-cases/DeletePokemonUseCase';
-import { PokemonController } from '@infrastructure/http/controllers/PokemonController';
+import { makePokemonController } from '@main/factories/makePokemonController.factory';
 
-const repository = new InMemoryPokemonRepository();
-
-const pokemonController = new PokemonController(
-  new ListPokemonUseCase(repository),
-  new GetPokemonByIdUseCase(repository),
-  new CreatePokemonUseCase(repository),
-  new UpdatePokemonUseCase(repository),
-  new DeletePokemonUseCase(repository),
-);
+const pokemonController = makePokemonController();
 
 const router = Router();
 
