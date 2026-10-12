@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InMemoryPokemonRepository = void 0;
+const Pokemon_1 = require("../../../domain/entities/Pokemon.js");
 class InMemoryPokemonRepository {
     items = [];
     async create(pokemon) {
@@ -26,6 +27,27 @@ class InMemoryPokemonRepository {
         if (pokemon) {
             this.items = this.items.filter((item) => item.id !== id);
         }
+    }
+    async findByType(type) {
+        return this.items.filter((item) => item.type.toLowerCase() === type.toLowerCase());
+    }
+    async updateLevel(id, newLevel) {
+        const index = this.items.findIndex((item) => item.id === id);
+        if (index !== -1) {
+            const current = this.items[index];
+            this.items[index] = new Pokemon_1.Pokemon({
+                id: current.id,
+                name: current.name,
+                type: current.type,
+                level: newLevel,
+            });
+        }
+    }
+    async searchByName(name) {
+        return this.items.filter((item) => item.name.toLowerCase().includes(name.toLowerCase()));
+    }
+    async count() {
+        return this.items.length;
     }
 }
 exports.InMemoryPokemonRepository = InMemoryPokemonRepository;

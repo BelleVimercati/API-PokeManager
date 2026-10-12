@@ -10,7 +10,7 @@ class CreatePokemonUseCase {
     }
     async execute(data) {
         const id = (0, node_crypto_1.randomUUID)();
-        const newPokemon = new Pokemon_1.Pokemon({ ...data, id });
+        const newPokemon = new Pokemon_1.Pokemon({ ...data, id, level: data.level ?? 1 });
         await this.pokemonRepository.create(newPokemon);
         return newPokemon;
     }

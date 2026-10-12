@@ -6,6 +6,7 @@ interface UpdatePokemonDTO {
   id: string;
   name?: string;
   type?: string;
+  level?: number;
 }
 
 export class UpdatePokemonUseCase {
@@ -22,6 +23,7 @@ export class UpdatePokemonUseCase {
       id: existingPokemon.id,
       name: data.name ?? existingPokemon.name,
       type: data.type ?? existingPokemon.type,
+      level: data.level ?? existingPokemon.level,
     });
 
     await this.pokemonRepository.update(updatedPokemon);

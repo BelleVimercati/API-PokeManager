@@ -15,5 +15,11 @@ class Pokemon {
     get type() {
         return this.props.type;
     }
+    get level() {
+        return this.props.level;
+    }
+    set level(level) {
+        this.props.level = level;
+    }
 }
 exports.Pokemon = Pokemon;

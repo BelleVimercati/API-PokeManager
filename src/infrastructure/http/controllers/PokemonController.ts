@@ -4,6 +4,9 @@ import { GetPokemonByIdUseCase } from '@application/use-cases/GetPokemonByIdUseC
 import { CreatePokemonUseCase } from '@application/use-cases/CreatePokemonUseCase';
 import { UpdatePokemonUseCase } from '@application/use-cases/UpdatePokemonUseCase';
 import { DeletePokemonUseCase } from '@application/use-cases/DeletePokemonUseCase';
+import { UpdatePokemonLevelUseCase } from '@application/use-cases/UpdatePokemonLevelUseCase';
+import { CountPokemonUseCase } from '@application/use-cases/CountPokemonUseCase';
+import { SearchPokemonByNameUseCase } from '@application/use-cases/SearchPokemonByNameUseCase';
 
 export class PokemonController {
   constructor(
@@ -12,7 +15,15 @@ export class PokemonController {
     private readonly createPokemonUseCase: CreatePokemonUseCase,
     private readonly updatePokemonUseCase: UpdatePokemonUseCase,
     private readonly deletePokemonUseCase: DeletePokemonUseCase,
+    private readonly updatePokemonLevelUseCase: UpdatePokemonLevelUseCase,
+    private readonly countPokemonUseCase: CountPokemonUseCase,
+    private readonly searchPokemonByNameUseCase: SearchPokemonByNameUseCase,
   ) {}
+
+  async count(_req: Request, res: Response): Promise<Response> {
+    const total = await this.countPokemonUseCase.execute();
+    return res.status(200).json({ total });
+  }
 
   async list(req: Request, res: Response): Promise<Response> {
     const type =
@@ -23,16 +34,26 @@ export class PokemonController {
       id: pokemon.id,
       name: pokemon.name,
       type: pokemon.type,
+      level: pokemon.level,
     }));
     return res.status(200).json({ data: formattedPokemons });
   }
 
   async create(req: Request, res: Response): Promise<Response> {
-    const { name, type } = req.body;
-    const pokemon = await this.createPokemonUseCase.execute({ name, type });
+    const { name, type, level } = req.body;
+    const pokemon = await this.createPokemonUseCase.execute({
+      name,
+      type,
+      level,
+    });
     return res.status(201).json({
       message: 'Pokemon created successfully',
-      data: { name: pokemon.name, type: pokemon.type },
+      data: {
+        id: pokemon.id,
+        name: pokemon.name,
+        type: pokemon.type,
+        level: pokemon.level,
+      },
     });
   }
 
@@ -44,15 +65,21 @@ export class PokemonController {
 
   async update(req: Request<{ id: string }>, res: Response): Promise<Response> {
     const { id } = req.params;
-    const { name, type } = req.body;
+    const { name, type, level } = req.body;
     const updatedPokemon = await this.updatePokemonUseCase.execute({
       id,
       name,
       type,
+      level,
     });
     return res.status(200).json({
       message: 'Pokemon updated successfully',
-      data: { name: updatedPokemon.name, type: updatedPokemon.type },
+      data: {
+        id: updatedPokemon.id,
+        name: updatedPokemon.name,
+        type: updatedPokemon.type,
+        level: updatedPokemon.level,
+      },
     });
   }
 
@@ -64,7 +91,35 @@ export class PokemonController {
     const pokemon = await this.getPokemonByIdUseCase.execute(id);
     return res.status(200).json({
       message: 'Pokemon retrieved successfully',
-      data: { id: pokemon.id, name: pokemon.name, type: pokemon.type },
+      data: {
+        id: pokemon.id,
+        name: pokemon.name,
+        type: pokemon.type,
+        level: pokemon.level,
+      },
+    });
+  }
+
+  async updateLevel(
+    req: Request<{ id: string }>,
+    res: Response,
+  ): Promise<Response> {
+    await this.updatePokemonLevelUseCase.execute(req.params.id, req.body.level);
+    return res
+      .status(200)
+      .json({ message: 'Pokemon level updated successfully' });
+  }
+
+  async search(req: Request, res: Response): Promise<Response> {
+    const term = typeof req.query.name === 'string' ? req.query.name : '';
+    const pokemons = await this.searchPokemonByNameUseCase.execute(term);
+    return res.status(200).json({
+      data: pokemons.map((p) => ({
+        id: p.id,
+        name: p.name,
+        type: p.type,
+        level: p.level,
+      })),
     });
   }
 }

@@ -2,6 +2,7 @@ export interface PokemonProps {
   id: string;
   name: string;
   type: string;
+  level: number;
 }
 
 export class Pokemon {
@@ -21,5 +22,13 @@ export class Pokemon {
 
   public get type(): string {
     return this.props.type;
+  }
+
+  public get level(): number {
+    return this.props.level;
+  }
+
+  public set level(level: number) {
+    this.props.level = level;
   }
 }
