@@ -1,4 +1,3 @@
-import { PgPokemonRepository } from '@infrastructure/database/postgres/pgPokemon.repository';
 import { ListPokemonUseCase } from '@application/use-cases/ListPokemonUseCase';
 import { GetPokemonByIdUseCase } from '@application/use-cases/GetPokemonByIdUseCase';
 import { CreatePokemonUseCase } from '@application/use-cases/CreatePokemonUseCase';
@@ -8,8 +7,9 @@ import { PokemonController } from '@infrastructure/http/controllers/PokemonContr
 import { UpdatePokemonLevelUseCase } from '@application/use-cases/UpdatePokemonLevelUseCase';
 import { CountPokemonUseCase } from '@application/use-cases/CountPokemonUseCase';
 import { SearchPokemonByNameUseCase } from '@application/use-cases/SearchPokemonByNameUseCase';
+import { PrismaPokemonRepository } from '@infrastructure/database/prisma/prismaPokemon.repository';
 
-const repository = new PgPokemonRepository();
+const repository = new PrismaPokemonRepository();
 
 export function makePokemonController(): PokemonController {
   const listPokemonUseCase = new ListPokemonUseCase(repository);

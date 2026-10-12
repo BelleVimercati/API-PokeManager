@@ -3,6 +3,7 @@ services:
     build: .
     container_name: manager_api
     restart: always
+    command: sh -c "npx prisma migrate deploy && node dist/src/main/server.js"
     ports:
       - "${PORT:-3333}:3333"
     environment:
@@ -27,7 +28,6 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-manager} -d ${POSTGRES_DB:-manager_db}"]
       interval: 5s
