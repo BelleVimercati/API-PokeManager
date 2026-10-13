@@ -432,6 +432,14 @@
               }
             }
           },
+          "400": {
+            "description": "Dados de entrada inválidos",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
           "404": {
             "description": "Treinador não encontrado",
             "content": {
@@ -518,18 +526,34 @@
       "TrainerInput": {
         "type": "object",
         "properties": {
-          "name": { "type": "string", "example": "Ash Ketchum" },
-          "email": { "type": "string", "example": "ash@pokemon.com" },
-          "specialty": { "type": "string", "example": "Elétrico" }
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "example": "Ash Ketchum"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 150,
+            "example": "ash@pokemon.com"
+          },
+          "specialty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Elétrico"
+          }
         },
         "required": ["name"]
       },
       "TrainerUpdateInput": {
         "type": "object",
+        "minProperties": 1,
         "properties": {
-          "name": { "type": "string" },
-          "email": { "type": "string" },
-          "specialty": { "type": "string" }
+          "name": { "type": "string", "minLength": 3, "maxLength": 100 },
+          "email": { "type": "string", "format": "email", "maxLength": 150 },
+          "specialty": { "type": "string", "minLength": 1, "maxLength": 100 }
         }
       },
       "Error": {

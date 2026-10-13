@@ -1,14 +1,4 @@
 Trabalho 2:
-- Adicionar o factory @done
-- Criar os aquivos docker @done
-- Conectar com API externa
-- Adicionar novas chamadas a api
-- Implementação do PrismaPokemonRepository substituindo o InMemory sem alterar
-a camada de Domínio.
-- Criação da interface IPokeApiGateway e implementação com Axios/Fetch em
-infrastructure/providers/.
-- Validação de payload de todas as requisições utilizando Zod.
-- Middleware de Tratamento Global de Erros (AppError) e exceções customizadas do
-domínio
+- Fazer 
 
 
