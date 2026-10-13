@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { Trainer } from '@domain/entities/Trainer';
 import { AppError } from '@domain/errors/app.error';
-import { ListTrainersUseCase } from '@application/use-cases/ListTrainersUseCase';
-import { GetTrainerByIdUseCase } from '@application/use-cases/GetTrainerByIdUseCase';
-import { CreateTrainerUseCase } from '@application/use-cases/CreateTrainerUseCase';
-import { UpdateTrainerUseCase } from '@application/use-cases/UpdateTrainerUseCase';
+import { ListTrainersUseCase } from '@application/use-cases/Trainer/ListTrainersUseCase';
+import { GetTrainerByIdUseCase } from '@application/use-cases/Trainer/GetTrainerByIdUseCase';
+import { CreateTrainerUseCase } from '@application/use-cases/Trainer/CreateTrainerUseCase';
+import { UpdateTrainerUseCase } from '@application/use-cases/Trainer/UpdateTrainerUseCase';
 
 export class TrainerController {
   constructor(
