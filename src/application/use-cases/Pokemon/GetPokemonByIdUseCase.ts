@@ -1,6 +1,6 @@
 import { IPokemonRepository } from '@domain/repositories/IPokemonRepository';
 import { Pokemon } from '@domain/entities/Pokemon';
-import { AppError } from '@domain/errors/app.error';
+import { NotFoundError } from '@domain/errors/not-found-error';
 
 export class GetPokemonByIdUseCase {
   constructor(private pokemonRepository: IPokemonRepository) {}
@@ -9,7 +9,7 @@ export class GetPokemonByIdUseCase {
     const pokemon = await this.pokemonRepository.findById(id);
 
     if (!pokemon) {
-      throw new AppError('Pokemon not found', 404);
+      throw new NotFoundError('Pokemon');
     }
     return pokemon;
   }

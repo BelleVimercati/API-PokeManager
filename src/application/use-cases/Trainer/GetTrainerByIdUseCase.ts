@@ -1,6 +1,6 @@
 import { IPgTrainerRepository } from '@domain/repositories/IPgTrainerRepository';
 import { Trainer } from '@domain/entities/Trainer';
-import { AppError } from '@domain/errors/app.error';
+import { NotFoundError } from '@domain/errors/not-found-error';
 
 export class GetTrainerByIdUseCase {
   constructor(private readonly trainerRepository: IPgTrainerRepository) {}
@@ -9,7 +9,7 @@ export class GetTrainerByIdUseCase {
     const trainer = await this.trainerRepository.findById(id);
 
     if (!trainer) {
-      throw new AppError('Trainer not found', 404);
+      throw new NotFoundError('Treinador');
     }
 
     return trainer;

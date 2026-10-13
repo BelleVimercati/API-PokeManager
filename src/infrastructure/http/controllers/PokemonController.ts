@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { ListPokemonUseCase } from '@application/use-cases/ListPokemonUseCase';
-import { GetPokemonByIdUseCase } from '@application/use-cases/GetPokemonByIdUseCase';
-import { CreatePokemonUseCase } from '@application/use-cases/CreatePokemonUseCase';
-import { UpdatePokemonUseCase } from '@application/use-cases/UpdatePokemonUseCase';
-import { DeletePokemonUseCase } from '@application/use-cases/DeletePokemonUseCase';
-import { UpdatePokemonLevelUseCase } from '@application/use-cases/UpdatePokemonLevelUseCase';
-import { CountPokemonUseCase } from '@application/use-cases/CountPokemonUseCase';
-import { SearchPokemonByNameUseCase } from '@application/use-cases/SearchPokemonByNameUseCase';
+import { ListPokemonUseCase } from '@application/use-cases/Pokemon/ListPokemonUseCase';
+import { GetPokemonByIdUseCase } from '@application/use-cases/Pokemon/GetPokemonByIdUseCase';
+import { CreatePokemonUseCase } from '@application/use-cases/Pokemon/CreatePokemonUseCase';
+import { UpdatePokemonUseCase } from '@application/use-cases/Pokemon/UpdatePokemonUseCase';
+import { DeletePokemonUseCase } from '@application/use-cases/Pokemon/DeletePokemonUseCase';
+import { UpdatePokemonLevelUseCase } from '@application/use-cases/Pokemon/UpdatePokemonLevelUseCase';
+import { CountPokemonUseCase } from '@application/use-cases/Pokemon/CountPokemonUseCase';
+import { SearchPokemonByNameUseCase } from '@application/use-cases/Pokemon/SearchPokemonByNameUseCase';
 
 export class PokemonController {
   constructor(

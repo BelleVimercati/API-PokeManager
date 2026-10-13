@@ -1,6 +1,7 @@
 import { IPgTrainerRepository } from '@domain/repositories/IPgTrainerRepository';
 import { Trainer } from '@domain/entities/Trainer';
-import { AppError } from '@domain/errors/app.error';
+import { NotFoundError } from '@domain/errors/not-found-error';
+import { ConflictError } from '@domain/errors/conflict-error';
 
 interface UpdateTrainerDTO {
   id: number;
@@ -16,7 +17,18 @@ export class UpdateTrainerUseCase {
     const existingTrainer = await this.trainerRepository.findById(data.id);
 
     if (!existingTrainer) {
-      throw new AppError('Trainer not found', 404);
+      throw new NotFoundError('Treinador');
+    }
+
+    if (data.email && data.email !== existingTrainer.email) {
+      const trainerWithEmail = await this.trainerRepository.findByEmail(
+        data.email,
+      );
+      if (trainerWithEmail && trainerWithEmail.id !== existingTrainer.id) {
+        throw new ConflictError(
+          'Já existe um Treinador cadastrado com este e-mail.',
+        );
+      }
     }
 
     const updatedTrainer = new Trainer({

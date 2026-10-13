@@ -1,5 +1,5 @@
 import { IPokemonRepository } from '@domain/repositories/IPokemonRepository';
-import { AppError } from '@domain/errors/app.error';
+import { NotFoundError } from '@domain/errors/not-found-error';
 
 export class DeletePokemonUseCase {
   constructor(private pokemonRepository: IPokemonRepository) {}
@@ -7,7 +7,7 @@ export class DeletePokemonUseCase {
   async execute(id: string): Promise<void> {
     const existingPokemon = await this.pokemonRepository.findById(id);
     if (!existingPokemon) {
-      throw new AppError('Pokemon not found', 404);
+      throw new NotFoundError('Pokemon');
     }
 
     await this.pokemonRepository.delete(id);
