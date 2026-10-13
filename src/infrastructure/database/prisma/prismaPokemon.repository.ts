@@ -15,6 +15,7 @@ export class PrismaPokemonRepository implements IPokemonRepository {
         baseExperience: pokemon.baseExperience,
         height: pokemon.height,
         weight: pokemon.weight,
+        trainerId: pokemon.trainerId,
       },
     });
   }
@@ -57,6 +58,7 @@ export class PrismaPokemonRepository implements IPokemonRepository {
         baseExperience: pokemon.baseExperience,
         height: pokemon.height,
         weight: pokemon.weight,
+        trainerId: pokemon.trainerId,
       },
     });
   }
@@ -82,6 +84,16 @@ export class PrismaPokemonRepository implements IPokemonRepository {
       baseExperience: row.baseExperience,
       height: row.height,
       weight: row.weight,
+      trainerId: row.trainerId,
     });
+  }
+
+  async findByTrainerId(trainerId: number): Promise<Pokemon[]> {
+    const rows = await prisma.pokemon.findMany({ where: { trainerId } });
+    return rows.map((row) => this.toEntity(row));
+  }
+
+  async countByTrainerId(trainerId: number): Promise<number> {
+    return prisma.pokemon.count({ where: { trainerId } });
   }
 }

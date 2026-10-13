@@ -10,4 +10,7 @@ export interface IPokemonRepository {
   updateLevel(id: string, newLevel: number): Promise<void>;
   searchByName(name: string): Promise<Pokemon[]>;
   count(): Promise<number>;
+
+  findByTrainerId(trainerId: number): Promise<Pokemon[]>;
+  countByTrainerId(trainerId: number): Promise<number>;
 }

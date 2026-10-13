@@ -7,6 +7,6 @@ export interface ExternalPokemonDetails {
   weight: number;
 }
 
-export interface PokemonExternalGateway {
+export interface IPokeApiGateway {
   findByName(name: string): Promise<ExternalPokemonDetails | null>;
 }

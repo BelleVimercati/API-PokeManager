@@ -14,6 +14,7 @@ export const createPokemonSchema = z.object({
     .number({ error: 'O nível é obrigatório' })
     .int('O nível deve ser um número inteiro')
     .min(1, 'O nível deve ser um número inteiro positivo')
+    .max(100, 'O nível deve ser no máximo 100')
     .optional(),
 });
 
@@ -23,8 +24,12 @@ export const updatePokemonSchema = createPokemonSchema
     error: 'Pelo menos um campo deve ser fornecido para atualização',
   });
 
-export const updatePokemonLevelSchema = createPokemonSchema.pick({
-  level: true,
+export const updatePokemonLevelSchema = z.object({
+  level: z
+    .number({ error: 'O nível é obrigatório' })
+    .int('O nível deve ser um número inteiro')
+    .min(1, 'O nível deve ser no mínimo 1')
+    .max(100, 'O nível deve ser no máximo 100'),
 });
 
 export const pokemonIdParamsSchema = z.object({

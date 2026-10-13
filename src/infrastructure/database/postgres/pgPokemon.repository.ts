@@ -11,6 +11,7 @@ interface PokemonRow {
   baseExperience: number | null;
   height: number | null;
   weight: number | null;
+  trainerId: number | null;
 }
 
 // As colunas no banco são snake_case (sprite_url, base_experience); o alias
@@ -19,14 +20,15 @@ const SELECT_COLUMNS = `
   id, name, type, level,
   sprite_url AS "spriteUrl",
   base_experience AS "baseExperience",
-  height, weight
+  height, weight,
+  trainer_id AS "trainerId"
 `;
 
 export class PgPokemonRepository implements IPokemonRepository {
   async create(pokemon: Pokemon): Promise<void> {
     const query = `
-      INSERT INTO pokemons (id, name, type, level, sprite_url, base_experience, height, weight)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      INSERT INTO pokemons (id, name, type, level, sprite_url, base_experience, height, weight, trainer_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     `;
     await postgresPool.query(query, [
       pokemon.id,
@@ -37,6 +39,7 @@ export class PgPokemonRepository implements IPokemonRepository {
       pokemon.baseExperience,
       pokemon.height,
       pokemon.weight,
+      pokemon.trainerId ?? null,
     ]);
   }
 
@@ -57,6 +60,7 @@ export class PgPokemonRepository implements IPokemonRepository {
       baseExperience: row.baseExperience,
       height: row.height,
       weight: row.weight,
+      trainerId: row.trainerId,
     });
   }
 
@@ -94,8 +98,8 @@ export class PgPokemonRepository implements IPokemonRepository {
     const query = `
       UPDATE pokemons
       SET name = $1, type = $2, level = $3, sprite_url = $4,
-          base_experience = $5, height = $6, weight = $7
-      WHERE id = $8
+          base_experience = $5, height = $6, weight = $7, trainer_id = $8
+      WHERE id = $9
     `;
     await postgresPool.query(query, [
       pokemon.name,
@@ -105,6 +109,7 @@ export class PgPokemonRepository implements IPokemonRepository {
       pokemon.baseExperience,
       pokemon.height,
       pokemon.weight,
+      pokemon.trainerId ?? null,
       pokemon.id,
     ]);
   }
@@ -117,5 +122,19 @@ export class PgPokemonRepository implements IPokemonRepository {
   async updateLevel(id: string, newLevel: number): Promise<void> {
     const query = `UPDATE pokemons SET level = $1 WHERE id = $2`;
     await postgresPool.query(query, [newLevel, id]);
+  }
+
+  async findByTrainerId(trainerId: number): Promise<Pokemon[]> {
+    const query = `SELECT ${SELECT_COLUMNS} FROM pokemons WHERE trainer_id = $1`;
+    const result = await postgresPool.query<PokemonRow>(query, [trainerId]);
+    return result.rows.map((row) => this.toEntity(row));
+  }
+
+  async countByTrainerId(trainerId: number): Promise<number> {
+    const result = await postgresPool.query(
+      `SELECT COUNT(*)::int AS total FROM pokemons WHERE trainer_id = $1`,
+      [trainerId],
+    );
+    return result.rows[0].total;
   }
 }

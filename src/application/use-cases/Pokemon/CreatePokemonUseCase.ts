@@ -2,7 +2,7 @@ import { IPokemonRepository } from '@domain/repositories/IPokemonRepository';
 import { Pokemon } from '@domain/entities/Pokemon';
 
 import { randomUUID } from 'node:crypto';
-import { PokemonExternalGateway } from '@domain/gateways/pokemon-external-gateway';
+import { IPokeApiGateway } from '@domain/gateways/IPokeApiGateway';
 import { NotFoundError } from '@domain/errors/not-found-error';
 
 interface CreatePokemonDTO {
@@ -15,11 +15,11 @@ interface CreatePokemonDTO {
 export class CreatePokemonUseCase {
   constructor(
     private pokemonRepository: IPokemonRepository,
-    private pokemonExternalGateway: PokemonExternalGateway,
+    private pokeApiGateway: IPokeApiGateway,
   ) {}
 
   async execute(data: CreatePokemonDTO): Promise<Pokemon> {
-    const details = await this.pokemonExternalGateway.findByName(data.name);
+    const details = await this.pokeApiGateway.findByName(data.name);
 
     if (!details) {
       // Mensagem neutra: o gateway pode ser a PokéAPI ou o mock em memória

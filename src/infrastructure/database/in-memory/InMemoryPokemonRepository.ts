@@ -41,13 +41,7 @@ export class InMemoryPokemonRepository implements IPokemonRepository {
   async updateLevel(id: string, newLevel: number): Promise<void> {
     const index = this.items.findIndex((item) => item.id === id);
     if (index !== -1) {
-      const current = this.items[index];
-      this.items[index] = new Pokemon({
-        id: current.id,
-        name: current.name,
-        type: current.type,
-        level: newLevel,
-      });
+      this.items[index].level = newLevel;
     }
   }
 
@@ -59,5 +53,13 @@ export class InMemoryPokemonRepository implements IPokemonRepository {
 
   async count(): Promise<number> {
     return this.items.length;
+  }
+
+  async findByTrainerId(trainerId: number): Promise<Pokemon[]> {
+    return this.items.filter((item) => item.trainerId === trainerId);
+  }
+
+  async countByTrainerId(trainerId: number): Promise<number> {
+    return this.items.filter((item) => item.trainerId === trainerId).length;
   }
 }

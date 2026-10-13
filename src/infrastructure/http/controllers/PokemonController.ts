@@ -110,6 +110,7 @@ export class PokemonController {
       baseExperience: pokemon.baseExperience ?? null,
       height: pokemon.height ?? null,
       weight: pokemon.weight ?? null,
+      trainerId: pokemon.trainerId ?? null,
     };
   }
 }

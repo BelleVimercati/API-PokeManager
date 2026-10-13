@@ -7,6 +7,7 @@ export interface PokemonProps {
   baseExperience?: number | null;
   height?: number | null;
   weight?: number | null;
+  trainerId?: number | null;
 }
 
 export class Pokemon {
@@ -65,5 +66,13 @@ export class Pokemon {
 
   public setWeight(weight: number | null): void {
     this.props.weight = weight;
+  }
+
+  public get trainerId(): number | null | undefined {
+    return this.props.trainerId;
+  }
+
+  public setTrainerId(trainerId: number | null): void {
+    this.props.trainerId = trainerId;
   }
 }

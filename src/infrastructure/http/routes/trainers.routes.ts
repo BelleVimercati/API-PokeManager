@@ -1,13 +1,17 @@
 import { Router } from 'express';
 import { makeTrainerController } from '@main/factories/makeTrainerController.factory';
+import { makeCaptureController } from '@main/factories/makeCaptureController.factory';
 import { validateRequest } from '@infrastructure/http/middlewares/validate-request';
 import {
   createTrainerSchema,
   updateTrainerSchema,
   trainerIdParamsSchema,
+  trainerIdRouteParamsSchema,
+  capturePokemonSchema,
 } from '@infrastructure/http/schemas/trainer-schemas';
 
 const trainerController = makeTrainerController();
+const captureController = makeCaptureController();
 
 const router = Router();
 
@@ -24,6 +28,19 @@ router.put(
   '/:id',
   validateRequest({ params: trainerIdParamsSchema, body: updateTrainerSchema }),
   (req, res) => trainerController.update(req, res),
+);
+router.post(
+  '/:trainerId/captures',
+  validateRequest({
+    params: trainerIdRouteParamsSchema,
+    body: capturePokemonSchema,
+  }),
+  (req, res) => captureController.capture(req, res),
+);
+router.get(
+  '/:trainerId/team',
+  validateRequest({ params: trainerIdRouteParamsSchema }),
+  (req, res) => captureController.getTeam(req, res),
 );
 
 export { router as trainerRoutes };

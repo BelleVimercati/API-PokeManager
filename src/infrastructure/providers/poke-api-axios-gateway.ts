@@ -1,8 +1,8 @@
 import axios from 'axios';
 import {
   ExternalPokemonDetails,
-  PokemonExternalGateway,
-} from '@domain/gateways/pokemon-external-gateway';
+  IPokeApiGateway,
+} from '@domain/gateways/IPokeApiGateway';
 import { ServiceUnavailableError } from '@domain/errors/service-unavailable-error';
 
 // Formato (parcial) da resposta da PokéAPI: fica restrito a este arquivo
@@ -34,7 +34,7 @@ const UNAVAILABLE_ERROR_CODES = new Set([
   'ECONNREFUSED',
 ]);
 
-export class PokeApiAxiosGateway implements PokemonExternalGateway {
+export class PokeApiAxiosGateway implements IPokeApiGateway {
   private readonly http = axios.create({
     baseURL: 'https://pokeapi.co/api/v2',
     timeout: POKEAPI_TIMEOUT_MS,

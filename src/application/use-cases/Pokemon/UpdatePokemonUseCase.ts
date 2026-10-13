@@ -29,6 +29,8 @@ export class UpdatePokemonUseCase {
       baseExperience: existingPokemon.baseExperience,
       height: existingPokemon.height,
       weight: existingPokemon.weight,
+      // A posse só muda pela captura, não pelo PUT
+      trainerId: existingPokemon.trainerId,
     });
 
     await this.pokemonRepository.update(updatedPokemon);

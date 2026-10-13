@@ -30,3 +30,14 @@ export const trainerIdParamsSchema = z.object({
     .int('O id do treinador deve ser um número inteiro')
     .positive('O id do treinador deve ser um número inteiro positivo'),
 });
+
+export const trainerIdRouteParamsSchema = z.object({
+  trainerId: z.coerce
+    .number()
+    .int()
+    .positive('O id do treinador deve ser um número inteiro positivo'),
+});
+
+export const capturePokemonSchema = z.object({
+  pokemonId: z.uuid('O id do Pokémon deve ser um UUID válido'),
+});

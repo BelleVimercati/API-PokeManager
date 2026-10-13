@@ -1,7 +1,7 @@
 import {
   ExternalPokemonDetails,
-  PokemonExternalGateway,
-} from '@domain/gateways/pokemon-external-gateway';
+  IPokeApiGateway,
+} from '@domain/gateways/IPokeApiGateway';
 
 // Dados fixos no mesmo formato que o PokeApiAxiosGateway devolve
 const POKEMONS: readonly ExternalPokemonDetails[] = [
@@ -34,7 +34,7 @@ const POKEMONS: readonly ExternalPokemonDetails[] = [
   },
 ];
 
-export class InMemoryPokemonGateway implements PokemonExternalGateway {
+export class InMemoryPokemonGateway implements IPokeApiGateway {
   async findByName(name: string): Promise<ExternalPokemonDetails | null> {
     const normalized = name.trim().toLowerCase();
     const pokemon = POKEMONS.find((p) => p.name === normalized);

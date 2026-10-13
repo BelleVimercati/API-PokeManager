@@ -46,7 +46,19 @@ export const errorHandler = (
     });
   }
 
-  // 4. Erros Desconhecidos ou Críticos de Sistema (500 Internal Server Error)
+  // 4. JSON malformado no corpo (lançado pelo express.json())
+  if (
+    error instanceof SyntaxError &&
+    'type' in error &&
+    error.type === 'entity.parse.failed'
+  ) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'JSON malformado no corpo da requisição',
+    });
+  }
+
+  // 5. Erros Desconhecidos ou Críticos de Sistema (500 Internal Server Error)
   console.error('💥 [Unhandled System Error]:', error);
 
   return res.status(500).json({

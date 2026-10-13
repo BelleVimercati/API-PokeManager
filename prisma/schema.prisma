@@ -20,6 +20,10 @@ model Pokemon {
   height         Int?
   weight         Int?
 
+  trainerId      Int? @map("trainer_id")
+  trainer        Trainer? @relation(fields: [trainerId], references: [id], onDelete: SetNull)
+
+  @@index([trainerId])
   @@map("pokemons")
 }
 
@@ -28,6 +32,7 @@ model Trainer {
   name      String  @map("nome") @db.VarChar(100)
   email     String? @unique @db.VarChar(150)
   specialty String? @map("especialidade") @db.VarChar(100)
+  pokemons Pokemon[]
 
   @@map("trainers")
 }

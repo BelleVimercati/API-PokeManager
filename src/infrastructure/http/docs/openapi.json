@@ -475,6 +475,104 @@
           }
         }
       }
+    },
+    "/trainers/{trainerId}/captures": {
+      "post": {
+        "tags": ["Trainers"],
+        "summary": "Captura um Pokémon para o time do Treinador",
+        "description": "Associa ao Treinador um Pokémon já cadastrado em /pokemons (cujos dados de imagem, atributos base e tipos vieram da PokéAPI no cadastro). Um Treinador pode ter no máximo 6 Pokémons no time e um Pokémon só pode pertencer a um Treinador.",
+        "parameters": [{ "$ref": "#/components/parameters/TrainerIdRoute" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CaptureInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pokémon capturado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Pokemon" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados de entrada inválidos",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Treinador ou Pokémon não encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "409": {
+            "description": "O Treinador já possui 6 Pokémons no time, ou o Pokémon já foi capturado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trainers/{trainerId}/team": {
+      "get": {
+        "tags": ["Trainers"],
+        "summary": "Lista o time atual do Treinador",
+        "parameters": [{ "$ref": "#/components/parameters/TrainerIdRoute" }],
+        "responses": {
+          "200": {
+            "description": "Time do Treinador",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "maxItems": 6,
+                      "items": { "$ref": "#/components/schemas/Pokemon" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Id inválido",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Treinador não encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -488,6 +586,13 @@
       },
       "TrainerId": {
         "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "integer" },
+        "description": "Id do Treinador"
+      },
+      "TrainerIdRoute": {
+        "name": "trainerId",
         "in": "path",
         "required": true,
         "schema": { "type": "integer" },
@@ -530,8 +635,26 @@
             "nullable": true,
             "description": "Peso em hectogramas (PokéAPI)",
             "example": 60
+          },
+          "trainerId": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Id do Treinador dono do Pokémon (null se não capturado)",
+            "example": 1
           }
         }
+      },
+      "CaptureInput": {
+        "type": "object",
+        "properties": {
+          "pokemonId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Id de um Pokémon já cadastrado (veja GET /pokemons)",
+            "example": "3f2b8c1e-7a4d-4c2e-9b1a-2d5e6f7a8b9c"
+          }
+        },
+        "required": ["pokemonId"]
       },
       "PokemonInput": {
         "type": "object",
