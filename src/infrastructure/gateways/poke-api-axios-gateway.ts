@@ -18,10 +18,26 @@ interface PokeApiPokemonResponse {
   };
 }
 
+// Limite estrito: a requisição não pode ficar pendente se a PokéAPI oscilar
+const POKEAPI_TIMEOUT_MS = 3000;
+
+const POKEAPI_UNAVAILABLE_MESSAGE =
+  'O serviço externo da PokeAPI está temporariamente indisponível. Tente novamente mais tarde';
+
+// Códigos do Axios/Node que indicam timeout, 5xx ou serviço fora do ar
+const UNAVAILABLE_ERROR_CODES = new Set([
+  'ECONNABORTED',
+  'ETIMEDOUT',
+  'ERR_BAD_RESPONSE',
+  'ERR_NETWORK',
+  'ENOTFOUND',
+  'ECONNREFUSED',
+]);
+
 export class PokeApiAxiosGateway implements PokemonExternalGateway {
   private readonly http = axios.create({
     baseURL: 'https://pokeapi.co/api/v2',
-    timeout: 5000,
+    timeout: POKEAPI_TIMEOUT_MS,
   });
 
   async findByName(name: string): Promise<ExternalPokemonDetails | null> {
@@ -32,12 +48,17 @@ export class PokeApiAxiosGateway implements PokemonExternalGateway {
       );
       return this.toDetails(data);
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) {
+      // Erro que não veio do Axios é bug nosso: deixa virar 500
+      if (!axios.isAxiosError(error)) {
+        throw error;
+      }
+      if (error.response?.status === 404) {
         return null;
       }
-      throw new ServiceUnavailableError(
-        'Não foi possível consultar a PokéAPI no momento',
-      );
+      if (error.code && UNAVAILABLE_ERROR_CODES.has(error.code)) {
+        console.warn(`[PokeAPI] falha de infraestrutura: ${error.code}`);
+      }
+      throw new ServiceUnavailableError(POKEAPI_UNAVAILABLE_MESSAGE);
     }
   }
 

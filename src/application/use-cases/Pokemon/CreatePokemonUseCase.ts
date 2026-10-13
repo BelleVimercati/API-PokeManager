@@ -22,10 +22,8 @@ export class CreatePokemonUseCase {
     const details = await this.pokemonExternalGateway.findByName(data.name);
 
     if (!details) {
-      throw new NotFoundError(
-        'Pokémon',
-        'Pokémon não encontrado na base oficial da PokeAPI',
-      );
+      // Mensagem neutra: o gateway pode ser a PokéAPI ou o mock em memória
+      throw new NotFoundError('Pokémon', 'Pokémon não encontrado');
     }
 
     const newPokemon = new Pokemon({
