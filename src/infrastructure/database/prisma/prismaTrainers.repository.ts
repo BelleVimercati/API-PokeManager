@@ -1,6 +1,6 @@
 import { Trainer } from '@domain/entities/Trainer';
 import { IPgTrainerRepository } from '@domain/repositories/IPgTrainerRepository';
-import { AppError } from '@domain/errors/app.error';
+import { ConflictError } from '@domain/errors/conflict-error';
 import {
   Prisma,
   Trainer as PrismaTrainer,
@@ -31,7 +31,7 @@ export class PrismaTrainerRepository implements IPgTrainerRepository {
       return this.toEntity(row);
     } catch (error) {
       if (isUniqueViolation(error)) {
-        throw new AppError(DUPLICATED_EMAIL_MESSAGE, 409);
+        throw new ConflictError(DUPLICATED_EMAIL_MESSAGE);
       }
       throw error;
     }
@@ -53,7 +53,7 @@ export class PrismaTrainerRepository implements IPgTrainerRepository {
       });
     } catch (error) {
       if (isUniqueViolation(error)) {
-        throw new AppError(DUPLICATED_EMAIL_MESSAGE, 409);
+        throw new ConflictError(DUPLICATED_EMAIL_MESSAGE);
       }
       throw error;
     }
@@ -61,6 +61,11 @@ export class PrismaTrainerRepository implements IPgTrainerRepository {
 
   async findById(id: number): Promise<Trainer | null> {
     const row = await prisma.trainer.findUnique({ where: { id } });
+    return row ? this.toEntity(row) : null;
+  }
+
+  async findByEmail(email: string): Promise<Trainer | null> {
+    const row = await prisma.trainer.findUnique({ where: { email } });
     return row ? this.toEntity(row) : null;
   }
 

@@ -1,6 +1,6 @@
 import { Trainer } from '@domain/entities/Trainer';
 import { IPgTrainerRepository } from '@domain/repositories/IPgTrainerRepository';
-import { AppError } from '@domain/errors/app.error';
+import { ConflictError } from '@domain/errors/conflict-error';
 import { postgresPool } from './connection';
 
 const UNIQUE_VIOLATION = '23505';
@@ -40,7 +40,7 @@ export class PgTrainerRepository implements IPgTrainerRepository {
       return this.toEntity(result.rows[0]);
     } catch (error) {
       if (isUniqueViolation(error)) {
-        throw new AppError(DUPLICATED_EMAIL_MESSAGE, 409);
+        throw new ConflictError(DUPLICATED_EMAIL_MESSAGE);
       }
       throw error;
     }
@@ -62,7 +62,7 @@ export class PgTrainerRepository implements IPgTrainerRepository {
       ]);
     } catch (error) {
       if (isUniqueViolation(error)) {
-        throw new AppError(DUPLICATED_EMAIL_MESSAGE, 409);
+        throw new ConflictError(DUPLICATED_EMAIL_MESSAGE);
       }
       throw error;
     }
@@ -71,6 +71,17 @@ export class PgTrainerRepository implements IPgTrainerRepository {
   async findById(id: number): Promise<Trainer | null> {
     const query = `SELECT id, nome, email, especialidade FROM trainers WHERE id = $1`;
     const result = await postgresPool.query<TrainerRow>(query, [id]);
+
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return this.toEntity(result.rows[0]);
+  }
+
+  async findByEmail(email: string): Promise<Trainer | null> {
+    const query = `SELECT id, nome, email, especialidade FROM trainers WHERE email = $1`;
+    const result = await postgresPool.query<TrainerRow>(query, [email]);
 
     if (result.rows.length === 0) {
       return null;
