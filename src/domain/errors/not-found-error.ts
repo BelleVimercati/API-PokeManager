@@ -1,7 +1,7 @@
 import { AppError } from './app.error';
 
 export class NotFoundError extends AppError {
-  constructor(entityName: string) {
-    super(`${entityName} não encontrado`, 404);
+  constructor(entityName: string, message?: string) {
+    super(message ?? `${entityName} não encontrado`, 404);
   }
 }

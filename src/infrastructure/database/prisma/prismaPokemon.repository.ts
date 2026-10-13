@@ -11,6 +11,10 @@ export class PrismaPokemonRepository implements IPokemonRepository {
         name: pokemon.name,
         type: pokemon.type,
         level: pokemon.level,
+        spriteUrl: pokemon.spriteUrl,
+        baseExperience: pokemon.baseExperience,
+        height: pokemon.height,
+        weight: pokemon.weight,
       },
     });
   }
@@ -49,6 +53,10 @@ export class PrismaPokemonRepository implements IPokemonRepository {
         name: pokemon.name,
         type: pokemon.type,
         level: pokemon.level,
+        spriteUrl: pokemon.spriteUrl,
+        baseExperience: pokemon.baseExperience,
+        height: pokemon.height,
+        weight: pokemon.weight,
       },
     });
   }
@@ -70,6 +78,10 @@ export class PrismaPokemonRepository implements IPokemonRepository {
       name: row.name,
       type: row.type,
       level: row.level,
+      spriteUrl: row.spriteUrl,
+      baseExperience: row.baseExperience,
+      height: row.height,
+      weight: row.weight,
     });
   }
 }

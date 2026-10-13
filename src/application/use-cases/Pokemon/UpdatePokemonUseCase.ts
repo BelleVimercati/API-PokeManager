@@ -24,6 +24,11 @@ export class UpdatePokemonUseCase {
       name: data.name ?? existingPokemon.name,
       type: data.type ?? existingPokemon.type,
       level: data.level ?? existingPokemon.level,
+      // Dados da PokéAPI não são editáveis pelo cliente: preserva os atuais
+      spriteUrl: existingPokemon.spriteUrl,
+      baseExperience: existingPokemon.baseExperience,
+      height: existingPokemon.height,
+      weight: existingPokemon.weight,
     });
 
     await this.pokemonRepository.update(updatedPokemon);

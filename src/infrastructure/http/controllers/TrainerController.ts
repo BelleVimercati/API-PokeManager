@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { Trainer } from '@domain/entities/Trainer';
-import { AppError } from '@domain/errors/app.error';
 import { ListTrainersUseCase } from '@application/use-cases/Trainer/ListTrainersUseCase';
 import { GetTrainerByIdUseCase } from '@application/use-cases/Trainer/GetTrainerByIdUseCase';
 import { CreateTrainerUseCase } from '@application/use-cases/Trainer/CreateTrainerUseCase';
@@ -23,7 +22,8 @@ export class TrainerController {
     req: Request<{ id: string }>,
     res: Response,
   ): Promise<Response> {
-    const id = this.parseId(req.params.id);
+    // O id já foi validado e convertido pelo trainerIdParamsSchema
+    const id = Number(req.params.id);
     const trainer = await this.getTrainerByIdUseCase.execute(id);
     return res.status(200).json({
       message: 'Trainer retrieved successfully',
@@ -45,7 +45,7 @@ export class TrainerController {
   }
 
   async update(req: Request<{ id: string }>, res: Response): Promise<Response> {
-    const id = this.parseId(req.params.id);
+    const id = Number(req.params.id);
     const { name, email, specialty } = req.body;
     const trainer = await this.updateTrainerUseCase.execute({
       id,
@@ -57,14 +57,6 @@ export class TrainerController {
       message: 'Trainer updated successfully',
       data: this.toResponse(trainer),
     });
-  }
-
-  private parseId(rawId: string): number {
-    const id = Number(rawId);
-    if (!Number.isInteger(id) || id < 1) {
-      throw new AppError('O id do treinador deve ser um número inteiro.', 400);
-    }
-    return id;
   }
 
   private toResponse(trainer: Trainer) {
