@@ -8,14 +8,19 @@ import { UpdatePokemonLevelUseCase } from '@application/use-cases/Pokemon/Update
 import { CountPokemonUseCase } from '@application/use-cases/Pokemon/CountPokemonUseCase';
 import { SearchPokemonByNameUseCase } from '@application/use-cases/Pokemon/SearchPokemonByNameUseCase';
 import { PrismaPokemonRepository } from '@infrastructure/database/prisma/prismaPokemon.repository';
+import { PokeApiAxiosGateway } from '@infrastructure/gateways/poke-api-axios-gateway';
 
 const repository = new PrismaPokemonRepository();
+const pokemonExternalGateway = new PokeApiAxiosGateway();
 
 export function makePokemonController(): PokemonController {
   const listPokemonUseCase = new ListPokemonUseCase(repository);
   const updatePokemonLevelUseCase = new UpdatePokemonLevelUseCase(repository);
   const getPokemonByIdUseCase = new GetPokemonByIdUseCase(repository);
-  const createPokemonUseCase = new CreatePokemonUseCase(repository);
+  const createPokemonUseCase = new CreatePokemonUseCase(
+    repository,
+    pokemonExternalGateway,
+  );
   const updatePokemonUseCase = new UpdatePokemonUseCase(repository);
   const deletePokemonUseCase = new DeletePokemonUseCase(repository);
   const countPokemonUseCase = new CountPokemonUseCase(repository);

@@ -8,11 +8,13 @@ export const createPokemonSchema = z.object({
   type: z
     .string({ error: 'O tipo é obrigatório' })
     .trim()
-    .min(3, 'O tipo deve ter no mínimo 3 caracteres'),
+    .min(3, 'O tipo deve ter no mínimo 3 caracteres')
+    .optional(),
   level: z
     .number({ error: 'O nível é obrigatório' })
     .int('O nível deve ser um número inteiro')
-    .min(1, 'O nível deve ser um número inteiro positivo'),
+    .min(1, 'O nível deve ser um número inteiro positivo')
+    .optional(),
 });
 
 export const updatePokemonSchema = createPokemonSchema

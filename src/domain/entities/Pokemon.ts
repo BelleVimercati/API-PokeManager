@@ -3,6 +3,10 @@ export interface PokemonProps {
   name: string;
   type: string;
   level: number;
+  spriteUrl?: string | null;
+  baseExperience?: number | null;
+  height?: number | null;
+  weight?: number | null;
 }
 
 export class Pokemon {
@@ -30,5 +34,36 @@ export class Pokemon {
 
   public set level(level: number) {
     this.props.level = level;
+  }
+
+  public get spriteUrl(): string | null | undefined {
+    return this.props.spriteUrl;
+  }
+  public get baseExperience(): number | null | undefined {
+    return this.props.baseExperience;
+  }
+
+  public get height(): number | null | undefined {
+    return this.props.height;
+  }
+
+  public get weight(): number | null | undefined {
+    return this.props.weight;
+  }
+
+  public setSpriteUrl(spriteUrl: string | null): void {
+    this.props.spriteUrl = spriteUrl;
+  }
+
+  public setBaseExperience(baseExperience: number | null): void {
+    this.props.baseExperience = baseExperience;
+  }
+
+  public setHeight(height: number | null): void {
+    this.props.height = height;
+  }
+
+  public setWeight(weight: number | null): void {
+    this.props.weight = weight;
   }
 }

@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
   // O projeto compila para CommonJS (sem "type": "module" no package.json)
   moduleFormat = "cjs"
 }
@@ -11,10 +11,14 @@ datasource db {
 }
 
 model Pokemon {
-  id    String @id @default(uuid()) @db.Uuid
-  name  String @db.VarChar(100)
-  type  String @db.VarChar(50)
-  level Int    @default(1)
+  id             String  @id @default(uuid()) @db.Uuid
+  name           String  @db.VarChar(100)
+  type           String  @db.VarChar(50)
+  level          Int     @default(1)
+  spriteUrl      String? @map("sprite_url") @db.VarChar(255)
+  baseExperience Int?    @map("base_experience")
+  height         Int?
+  weight         Int?
 
   @@map("pokemons")
 }

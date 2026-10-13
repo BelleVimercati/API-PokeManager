@@ -57,6 +57,7 @@
       "post": {
         "tags": ["Pokemons"],
         "summary": "Cadastra um novo Pokémon no catálogo local",
+        "description": "Consulta a PokéAPI (https://pokeapi.co) pelo nome informado e salva automaticamente o sprite oficial, a experiência base, a altura e o peso. Se `type` não for enviado, é usado o tipo primário oficial. O nome é salvo no formato da PokéAPI (minúsculo).",
         "requestBody": {
           "required": true,
           "content": {
@@ -82,6 +83,22 @@
           },
           "400": {
             "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Pokémon não encontrado na base oficial da PokeAPI",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "503": {
+            "description": "Não foi possível consultar a PokéAPI no momento",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -486,16 +503,51 @@
             "format": "uuid",
             "example": "3f2b8c1e-7a4d-4c2e-9b1a-2d5e6f7a8b9c"
           },
-          "name": { "type": "string", "example": "Pikachu" },
+          "name": { "type": "string", "example": "pikachu" },
           "type": { "type": "string", "example": "electric" },
-          "level": { "type": "integer", "example": 5 }
+          "level": { "type": "integer", "example": 5 },
+          "spriteUrl": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Imagem oficial (official-artwork) vinda da PokéAPI",
+            "example": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
+          },
+          "baseExperience": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Experiência base vinda da PokéAPI",
+            "example": 112
+          },
+          "height": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Altura em decímetros (PokéAPI)",
+            "example": 4
+          },
+          "weight": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Peso em hectogramas (PokéAPI)",
+            "example": 60
+          }
         }
       },
       "PokemonInput": {
         "type": "object",
         "properties": {
-          "name": { "type": "string", "example": "Pikachu" },
-          "type": { "type": "string", "example": "electric" },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "description": "Nome do Pokémon na PokéAPI",
+            "example": "charizard"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 3,
+            "description": "Opcional. Se omitido, usa o tipo primário oficial da PokéAPI",
+            "example": "fire"
+          },
           "level": {
             "type": "integer",
             "minimum": 1,
@@ -504,7 +556,7 @@
             "example": 5
           }
         },
-        "required": ["name", "type"]
+        "required": ["name"]
       },
       "PokemonUpdateInput": {
         "type": "object",
@@ -559,9 +611,19 @@
       "Error": {
         "type": "object",
         "properties": {
-          "status": { "type": "string" },
-          "statusCode": { "type": "integer" },
-          "message": { "type": "string" }
+          "status": { "type": "string", "example": "error" },
+          "message": { "type": "string" },
+          "details": {
+            "type": "array",
+            "description": "Presente apenas em erros de validação",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "message": { "type": "string" }
+              }
+            }
+          }
         }
       }
     }

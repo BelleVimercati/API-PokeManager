@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Pokemon } from '@domain/entities/Pokemon';
 import { ListPokemonUseCase } from '@application/use-cases/Pokemon/ListPokemonUseCase';
 import { GetPokemonByIdUseCase } from '@application/use-cases/Pokemon/GetPokemonByIdUseCase';
 import { CreatePokemonUseCase } from '@application/use-cases/Pokemon/CreatePokemonUseCase';
@@ -29,17 +30,13 @@ export class PokemonController {
     const type =
       typeof req.query.type === 'string' ? req.query.type : undefined;
     const pokemons = await this.listPokemonUseCase.execute({ type });
-
-    const formattedPokemons = pokemons.map((pokemon) => ({
-      id: pokemon.id,
-      name: pokemon.name,
-      type: pokemon.type,
-      level: pokemon.level,
-    }));
-    return res.status(200).json({ data: formattedPokemons });
+    return res
+      .status(200)
+      .json({ data: pokemons.map((pokemon) => this.toResponse(pokemon)) });
   }
 
   async create(req: Request, res: Response): Promise<Response> {
+    // spriteUrl, baseExperience, height e weight vêm da PokéAPI, não do cliente
     const { name, type, level } = req.body;
     const pokemon = await this.createPokemonUseCase.execute({
       name,
@@ -48,12 +45,7 @@ export class PokemonController {
     });
     return res.status(201).json({
       message: 'Pokemon created successfully',
-      data: {
-        id: pokemon.id,
-        name: pokemon.name,
-        type: pokemon.type,
-        level: pokemon.level,
-      },
+      data: this.toResponse(pokemon),
     });
   }
 
@@ -74,12 +66,7 @@ export class PokemonController {
     });
     return res.status(200).json({
       message: 'Pokemon updated successfully',
-      data: {
-        id: updatedPokemon.id,
-        name: updatedPokemon.name,
-        type: updatedPokemon.type,
-        level: updatedPokemon.level,
-      },
+      data: this.toResponse(updatedPokemon),
     });
   }
 
@@ -91,12 +78,7 @@ export class PokemonController {
     const pokemon = await this.getPokemonByIdUseCase.execute(id);
     return res.status(200).json({
       message: 'Pokemon retrieved successfully',
-      data: {
-        id: pokemon.id,
-        name: pokemon.name,
-        type: pokemon.type,
-        level: pokemon.level,
-      },
+      data: this.toResponse(pokemon),
     });
   }
 
@@ -113,13 +95,21 @@ export class PokemonController {
   async search(req: Request, res: Response): Promise<Response> {
     const term = typeof req.query.name === 'string' ? req.query.name : '';
     const pokemons = await this.searchPokemonByNameUseCase.execute(term);
-    return res.status(200).json({
-      data: pokemons.map((p) => ({
-        id: p.id,
-        name: p.name,
-        type: p.type,
-        level: p.level,
-      })),
-    });
+    return res
+      .status(200)
+      .json({ data: pokemons.map((pokemon) => this.toResponse(pokemon)) });
+  }
+
+  private toResponse(pokemon: Pokemon) {
+    return {
+      id: pokemon.id,
+      name: pokemon.name,
+      type: pokemon.type,
+      level: pokemon.level,
+      spriteUrl: pokemon.spriteUrl ?? null,
+      baseExperience: pokemon.baseExperience ?? null,
+      height: pokemon.height ?? null,
+      weight: pokemon.weight ?? null,
+    };
   }
 }
