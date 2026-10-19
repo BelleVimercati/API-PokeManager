@@ -2,11 +2,13 @@ import { Request, Response } from 'express';
 import { Pokemon } from '@domain/entities/Pokemon';
 import { CapturePokemonUseCase } from '@application/use-cases/Capture/CapturePokemonUseCase';
 import { GetTrainerTeamUseCase } from '@application/use-cases/Capture/GetTrainerTeamUseCase';
+import { ReleasePokemonUseCase } from '@application/use-cases/Capture/ReleasePokemonUseCase';
 
 export class CaptureController {
   constructor(
     private readonly capturePokemonUseCase: CapturePokemonUseCase,
     private readonly getTrainerTeamUseCase: GetTrainerTeamUseCase,
+    private readonly releasePokemonUseCase: ReleasePokemonUseCase,
   ) {}
 
   async capture(
@@ -15,10 +17,10 @@ export class CaptureController {
   ): Promise<Response> {
     // O trainerId já foi validado e convertido pelo trainerIdRouteParamsSchema
     const trainerId = Number(req.params.trainerId);
-    const { pokemonId } = req.body;
+    const { name } = req.body;
     const pokemon = await this.capturePokemonUseCase.execute({
       trainerId,
-      pokemonId,
+      pokemonName: name,
     });
     return res.status(201).json({
       message: 'Pokemon captured successfully',
@@ -37,17 +39,28 @@ export class CaptureController {
       .json({ data: team.map((pokemon) => this.toResponse(pokemon)) });
   }
 
+  async release(
+    req: Request<{ trainerId: string; pokemonId: string }>,
+    res: Response,
+  ): Promise<Response> {
+    await this.releasePokemonUseCase.execute({
+      trainerId: Number(req.params.trainerId),
+      pokemonId: req.params.pokemonId,
+    });
+    return res.status(204).send();
+  }
+
   private toResponse(pokemon: Pokemon) {
     return {
       id: pokemon.id,
+      pokedexId: pokemon.pokedexId,
       name: pokemon.name,
-      type: pokemon.type,
+      types: pokemon.types,
+      spriteUrl: pokemon.spriteUrl,
       level: pokemon.level,
-      spriteUrl: pokemon.spriteUrl ?? null,
-      baseExperience: pokemon.baseExperience ?? null,
-      height: pokemon.height ?? null,
-      weight: pokemon.weight ?? null,
-      trainerId: pokemon.trainerId ?? null,
+      stats: pokemon.stats,
+      trainerId: pokemon.trainerId,
+      capturedAt: pokemon.capturedAt ?? null,
     };
   }
 }

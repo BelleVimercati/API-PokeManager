@@ -8,6 +8,7 @@ import {
   trainerIdParamsSchema,
   trainerIdRouteParamsSchema,
   capturePokemonSchema,
+  teamPokemonParamsSchema,
 } from '@infrastructure/http/schemas/trainer-schemas';
 
 const trainerController = makeTrainerController();
@@ -41,6 +42,11 @@ router.get(
   '/:trainerId/team',
   validateRequest({ params: trainerIdRouteParamsSchema }),
   (req, res) => captureController.getTeam(req, res),
+);
+router.delete(
+  '/:trainerId/team/:pokemonId',
+  validateRequest({ params: teamPokemonParamsSchema }),
+  (req, res) => captureController.release(req, res),
 );
 
 export { router as trainerRoutes };

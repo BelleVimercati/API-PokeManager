@@ -10,18 +10,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Cada linha é um Pokémon capturado por um treinador (o time).
+// Os dados vêm da PokéAPI no momento da captura.
 model Pokemon {
-  id             String  @id @default(uuid()) @db.Uuid
-  name           String  @db.VarChar(100)
-  type           String  @db.VarChar(50)
-  level          Int     @default(1)
-  spriteUrl      String? @map("sprite_url") @db.VarChar(255)
-  baseExperience Int?    @map("base_experience")
-  height         Int?
-  weight         Int?
+  id             String   @id @default(uuid()) @db.Uuid
+  pokedexId      Int      @map("pokedex_id")
+  name           String   @db.VarChar(100)
+  types          String[]
+  spriteUrl      String?  @map("sprite_url") @db.VarChar(255)
+  level          Int      @default(1)
+  hp             Int
+  attack         Int
+  defense        Int
+  specialAttack  Int      @map("special_attack")
+  specialDefense Int      @map("special_defense")
+  speed          Int
+  capturedAt     DateTime @default(now()) @map("captured_at")
 
-  trainerId      Int? @map("trainer_id")
-  trainer        Trainer? @relation(fields: [trainerId], references: [id], onDelete: SetNull)
+  trainerId Int     @map("trainer_id")
+  trainer   Trainer @relation(fields: [trainerId], references: [id], onDelete: Cascade)
 
   @@index([trainerId])
   @@map("pokemons")

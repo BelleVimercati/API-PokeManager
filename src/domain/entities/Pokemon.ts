@@ -1,17 +1,28 @@
+// Atributos base (stats) oficiais da PokéAPI
+export interface PokemonStats {
+  hp: number;
+  attack: number;
+  defense: number;
+  specialAttack: number;
+  specialDefense: number;
+  speed: number;
+}
+
+// Pokémon capturado: sempre pertence a um treinador
 export interface PokemonProps {
   id: string;
+  pokedexId: number;
   name: string;
-  type: string;
+  types: string[];
+  spriteUrl: string | null;
   level: number;
-  spriteUrl?: string | null;
-  baseExperience?: number | null;
-  height?: number | null;
-  weight?: number | null;
-  trainerId?: number | null;
+  stats: PokemonStats;
+  trainerId: number;
+  capturedAt?: Date;
 }
 
 export class Pokemon {
-  private props: PokemonProps;
+  private readonly props: PokemonProps;
 
   constructor(props: PokemonProps) {
     this.props = props;
@@ -21,58 +32,35 @@ export class Pokemon {
     return this.props.id;
   }
 
+  public get pokedexId(): number {
+    return this.props.pokedexId;
+  }
+
   public get name(): string {
     return this.props.name;
   }
 
-  public get type(): string {
-    return this.props.type;
+  public get types(): string[] {
+    return this.props.types;
+  }
+
+  public get spriteUrl(): string | null {
+    return this.props.spriteUrl;
   }
 
   public get level(): number {
     return this.props.level;
   }
 
-  public set level(level: number) {
-    this.props.level = level;
+  public get stats(): PokemonStats {
+    return this.props.stats;
   }
 
-  public get spriteUrl(): string | null | undefined {
-    return this.props.spriteUrl;
-  }
-  public get baseExperience(): number | null | undefined {
-    return this.props.baseExperience;
-  }
-
-  public get height(): number | null | undefined {
-    return this.props.height;
-  }
-
-  public get weight(): number | null | undefined {
-    return this.props.weight;
-  }
-
-  public setSpriteUrl(spriteUrl: string | null): void {
-    this.props.spriteUrl = spriteUrl;
-  }
-
-  public setBaseExperience(baseExperience: number | null): void {
-    this.props.baseExperience = baseExperience;
-  }
-
-  public setHeight(height: number | null): void {
-    this.props.height = height;
-  }
-
-  public setWeight(weight: number | null): void {
-    this.props.weight = weight;
-  }
-
-  public get trainerId(): number | null | undefined {
+  public get trainerId(): number {
     return this.props.trainerId;
   }
 
-  public setTrainerId(trainerId: number | null): void {
-    this.props.trainerId = trainerId;
+  public get capturedAt(): Date | undefined {
+    return this.props.capturedAt;
   }
 }

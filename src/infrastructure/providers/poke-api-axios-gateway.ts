@@ -8,11 +8,13 @@ import { ServiceUnavailableError } from '@domain/errors/service-unavailable-erro
 // Formato (parcial) da resposta da PokéAPI: fica restrito a este arquivo
 // para que o JSON externo não vaze para o domínio (camada anti-corrupção)
 interface PokeApiPokemonResponse {
+  id: number;
   name: string;
   base_experience: number | null;
   height: number;
   weight: number;
   types: { slot: number; type: { name: string } }[];
+  stats: { base_stat: number; stat: { name: string } }[];
   sprites: {
     other?: { 'official-artwork'?: { front_default: string | null } };
   };
@@ -63,7 +65,12 @@ export class PokeApiAxiosGateway implements IPokeApiGateway {
   }
 
   private toDetails(data: PokeApiPokemonResponse): ExternalPokemonDetails {
+    // A PokéAPI devolve os stats como lista: [{ base_stat, stat: { name } }]
+    const stat = (name: string): number =>
+      data.stats.find((s) => s.stat.name === name)?.base_stat ?? 0;
+
     return {
+      id: data.id,
       name: data.name,
       types: [...data.types]
         .sort((a, b) => a.slot - b.slot)
@@ -73,6 +80,14 @@ export class PokeApiAxiosGateway implements IPokeApiGateway {
       baseExperience: data.base_experience,
       height: data.height,
       weight: data.weight,
+      stats: {
+        hp: stat('hp'),
+        attack: stat('attack'),
+        defense: stat('defense'),
+        specialAttack: stat('special-attack'),
+        specialDefense: stat('special-defense'),
+        speed: stat('speed'),
+      },
     };
   }
 }

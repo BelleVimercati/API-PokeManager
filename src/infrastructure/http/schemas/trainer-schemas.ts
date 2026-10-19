@@ -38,6 +38,14 @@ export const trainerIdRouteParamsSchema = z.object({
     .positive('O id do treinador deve ser um número inteiro positivo'),
 });
 
-export const capturePokemonSchema = z.object({
+export const teamPokemonParamsSchema = trainerIdRouteParamsSchema.extend({
   pokemonId: z.uuid('O id do Pokémon deve ser um UUID válido'),
+});
+
+export const capturePokemonSchema = z.object({
+  name: z
+    .string({ error: 'O nome do Pokémon é obrigatório' })
+    .trim()
+    .min(1, 'O nome do Pokémon não pode ser vazio')
+    .toLowerCase(),
 });

@@ -1,0 +1,8 @@
+{
+  // Só para checagem de tipos dos testes (npm run typecheck); o build usa o tsconfig.json
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["src/**/*", "tests/**/*"]
+}

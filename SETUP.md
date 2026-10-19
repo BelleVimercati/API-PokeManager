@@ -17,7 +17,15 @@ npm install
 cp .env.example .env
 ```
 
-### 3. Rodar em desenvolvimento
+Ajuste o `DATABASE_URL` se o seu PostgreSQL não usar os valores do exemplo.
+
+### 3. Criar as tabelas e gerar o Prisma Client
+```bash
+npx prisma migrate deploy
+npx prisma generate
+```
+
+### 4. Rodar em desenvolvimento
 ```bash
 npm run dev
 ```
